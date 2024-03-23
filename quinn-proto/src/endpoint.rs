@@ -452,8 +452,7 @@ impl Endpoint {
         let (retry_src_cid, orig_dst_cid) = if server_config.use_retry {
             if token.is_empty() {
                 // First Initial
-                let mut random_bytes = vec![0u8; RetryToken::RANDOM_BYTES_LEN];
-                self.rng.fill_bytes(&mut random_bytes);
+                //
                 // The peer will use this as the DCID of its following Initials. Initial DCIDs are
                 // looked up separately from Handshake/Data DCIDs, so there is no risk of collision
                 // with established connections. In the unlikely event that a collision occurs
@@ -464,7 +463,6 @@ impl Endpoint {
                 let token = RetryToken {
                     orig_dst_cid: dst_cid,
                     issued: SystemTime::now(),
-                    random_bytes: &random_bytes,
                 }
                 .encode(&*server_config.token_key, &addresses.remote, &loc_cid);
 
