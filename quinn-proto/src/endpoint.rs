@@ -180,16 +180,6 @@ impl Endpoint {
             }
         };
 
-        if !first_decode.is_initial()
-            && self
-                .local_cid_generator
-                .validate(first_decode.dst_cid())
-                .is_err()
-        {
-            debug!("dropping packet with invalid CID");
-            return None;
-        }
-
         //
         // Handle packet on existing connection, if any
         //
@@ -278,6 +268,17 @@ impl Endpoint {
         // If we got this far, we're a server receiving a seemingly valid packet for an unknown
         // connection. Send a stateless reset if possible.
         //
+
+        if !first_decode.is_initial()
+            && self
+                .local_cid_generator
+                .validate(first_decode.dst_cid())
+                .is_err()
+        {
+            debug!("dropping packet with invalid CID");
+            return None;
+        }
+
         if !dst_cid.is_empty() {
             return self
                 .stateless_reset(now, datagram_len, addresses, dst_cid, buf)
